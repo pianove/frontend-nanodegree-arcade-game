@@ -80,12 +80,14 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
+    
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the update function for your
+     * their update() methods. It will then call the collision function to reset Player when collision.
+ It will then call the update function for your
      * player object. These update methods should focus purely on updating
      * the data/properties related to  the object. Do your drawing in your
      * render methods.
@@ -93,10 +95,16 @@ var Engine = (function(global) {
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
-        });
-        player.update();
+        })
+       player.update();
+        
     }
-
+    
+    function checkCollisions() {
+       allEnemies.forEach(function(enemy) {
+            enemy.collision();
+       });
+    }
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
      * game tick (or loop of the game engine) because that's how games work -
@@ -135,9 +143,7 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
-
-        renderEntities();
+       renderEntities()
     }
 
     /* This function is called by the render function and is called on each game
@@ -149,9 +155,8 @@ var Engine = (function(global) {
          * the render function you have defined.
          */
         allEnemies.forEach(function(enemy) {
-            enemy.render();
+           enemy.render();            
         });
-
         player.render();
     }
 
@@ -181,4 +186,6 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.width = canvas.width;
+    global.height = canvas.height;
 })(this);
