@@ -70,17 +70,10 @@ var Engine = (function(global) {
     }
 
     /* This function is called by main (our game loop) and itself calls all
-     * of the functions which may need to update entity's data. Based on how
-     * you implement your collision detection (when two entities occupy the
-     * same space, for instance when your character should die), you may find
-     * the need to add an additional function call here. For now, we've left
-     * it commented out - you may or may not want to implement this
-     * functionality this way (you could just implement collision detection
-     * on the entities themselves within your app.js file).
+     * of the functions which may need to update entity's data.
      */
-    function update(dt) {
+     function update(dt) {
         updateEntities(dt);
-        checkCollisions();
     }
 
     
@@ -100,11 +93,8 @@ var Engine = (function(global) {
         
     }
     
-    function checkCollisions() {
-       allEnemies.forEach(function(enemy) {
-            enemy.collision();
-       });
-    }
+
+    
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
      * game tick (or loop of the game engine) because that's how games work -
@@ -165,7 +155,8 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
+        //oninput = "Choose your Player"
+        
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -181,7 +172,7 @@ var Engine = (function(global) {
     ]);
     Resources.onReady(init);
 
-    /* Assign the canvas' context object to the global variable (the window
+    /* Assign the canvas' context object and canvas width and canvas height to the global variable (the window
      * object when run in a browser) so that developer's can use it more easily
      * from within their app.js files.
      */
