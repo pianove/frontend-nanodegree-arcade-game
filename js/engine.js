@@ -14,6 +14,7 @@
  * a little simpler to work with.
  */
 
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -23,11 +24,17 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
-
+        lastTime,
+        title = doc.createElement('h1'),
+        titleName = doc.createTextNode("score"),
+        para = doc.createElement('p');
+    
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+    title.appendChild(titleName);
+    doc.body.appendChild(title);
+    doc.body.appendChild(para);
+    doc.body.appendChild(canvas);            
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -79,11 +86,11 @@ var Engine = (function(global) {
     
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
-     * their update() methods. It will then call the collision function to reset Player when collision.
- It will then call the update function for your
-     * player object. These update methods should focus purely on updating
-     * the data/properties related to  the object. Do your drawing in your
-     * render methods.
+     * their update() methods. It will then call the collision function to 
+     * reset Player when collision. It will then call the update function 
+     * for your player object. These update methods should focus purely on
+     * updating the data/properties related to  the object. Do your drawing
+     * in your render methods.
      */
     function updateEntities(dt) {
         allEnemies.forEach(function(enemy) {
@@ -93,7 +100,6 @@ var Engine = (function(global) {
         
     }
     
-
     
     /* This function initially draws the "game level", it will then call
      * the renderEntities function. Remember, this function is called every
@@ -133,7 +139,9 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-       renderEntities()
+        
+        para.innerHTML = player.score;
+        renderEntities()
     }
 
     /* This function is called by the render function and is called on each game
