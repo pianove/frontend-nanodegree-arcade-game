@@ -55,7 +55,8 @@ Enemy.prototype.render = function() {
 
 
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
+    // engine.js mySprite variable gives the value of this.sprite before rendering the player
+    this.sprite;
     // setting the initial location
     this.x = PLAYER_INIT_X;
     this.y = PLAYER_INIT_Y;

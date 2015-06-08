@@ -12,6 +12,10 @@
  * This engine is available globally via the Engine variable and it also makes
  * the canvas' context (ctx) object globally available to make writing app.js
  * a little simpler to work with.
+ *
+ * NOTE that I chosen not to use jQuery library in this project as I wanted to
+ * get a practice in DOM handling. It definitely multiplies codelines but I 
+ * learnt tremendously about DOM attributes, events and debugging. 
  */
 
 
@@ -19,23 +23,29 @@ var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
+     * Also, setting mySprite variable with a default picture
+     * that gets updated during Player selection.
+     * 
      */
     var doc = global.document,
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime,
-        title = doc.createElement('h1'),
-        titleName = doc.createTextNode("score"),
+        title = doc.createElement('h1');
         para = doc.createElement('p');
+        mySprite = 'images/char-boy.png';
     
     canvas.width = 505;
     canvas.height = 606;
-    title.appendChild(titleName);
+    // add all DOM elements that are required to play the game to class "game-play"
+    title.className = "game-play";
     doc.body.appendChild(title);
+    para.className = "game-play";
     doc.body.appendChild(para);
-    doc.body.appendChild(canvas);            
-
+    canvas.className = "game-play";
+    doc.body.appendChild(canvas);  
+    
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -76,6 +86,11 @@ var Engine = (function(global) {
         main();
     }
 
+    /* This function sets the player's sprite based on the clicked image 
+     * setting the mySprite variable.
+     */
+    
+    
     /* This function is called by main (our game loop) and itself calls all
      * of the functions which may need to update entity's data.
      */
@@ -96,6 +111,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         })
+       player.sprite = mySprite;
        player.update();
         
     }
@@ -140,6 +156,9 @@ var Engine = (function(global) {
             }
         }
         
+        /* Add score to DOM 
+        */
+        title.innerHTML = "score";
         para.innerHTML = player.score;
         renderEntities()
     }
@@ -158,14 +177,143 @@ var Engine = (function(global) {
         player.render();
     }
 
-    /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
+    
+    /* This function creates the initial menu to start the game or to exit. 
+    * Then proceeds to player selection screen. 
+    * It's only called once by the init() method.
      */
     function reset() {
-        //oninput = "Choose your Player"
         
-    }
+        //setting players character pictures and names
+        var playerSprites = {
+            img : [
+                'images/char-boy.png',
+                'images/char-cat-girl.png',
+                'images/char-horn-girl.png',
+                'images/char-pink-girl.png',
+                'images/char-princess-girl.png'],
+            name :[
+                'coccino',
+                'vanille',
+                'santoria',
+                'venus',
+                'altesse']
+        };
+        
+
+        // Get all elements belonging to class 'game-play'
+        var play = doc.querySelectorAll('.game-play');
+        // Hide all elements within that class 
+        var i;
+        for (i =0; i < play.length; i++) {
+            play[i].style.display = "none";    
+        }
+        // Set game title element and their attributes, unique css values and add to DOM
+        var startScreen = doc.createElement('h1');
+        startScreen.className = 'start-screen';
+        doc.body.appendChild(startScreen);
+        startScreen.innerHTML = "frogger arcade game";
+        startScreen.style.fontStyle = '900, Georgia, serif';
+        startScreen.style.color = 'red';
+        startScreen.style.paddingTop = "150px";
+        
+        // Create button elements to start the game and to exit from the game and add to DOM
+        
+        // Start game button 
+        var btnStart = doc.createElement("button");
+        btnStart.id = "btn-start";
+        btnStart.className = 'start-screen';
+        var t = doc.createTextNode("START GAME");
+        btnStart.appendChild(t);
+        doc.body.appendChild(btnStart);
+        btnStart.style.color = "green";
+        // On click hide initial screen and get to Player selection screen
+        btnStart.addEventListener('click', function (){            
+            var i;
+            var hide = doc.querySelectorAll(".start-screen");
+            for (i=0; i < hide.length; i++ ) {
+                hide[i].style.display = "none";
+            }
+            var unhide = doc.getElementById("select-player-content");
+            unhide.style.display = "inline-flex";
+            unhide = doc.getElementById("select-player-title");
+            unhide.style.display = "block";
+        });
+        
+        // create "select player screen" elements and add to DOM  
+        // add title
+        var title = doc.createElement("h1");
+        title.id = "select-player-title";
+        title.className = "select-player";
+        title.innerHTML = "Select your player";
+        title.style.paddingTop = "150px";
+        title.style.paddingBottom = "35px";
+        title.style.display = "none";
+        doc.body.appendChild(title);
+        
+        // add players pictures and captions
+        var content = doc.createElement("div");
+        content.id = "select-player-content";
+        content.className = "select-player";
+        content.style.display = "none";
+        doc.body.appendChild(content);
+        var imgWidth = 100;
+        var imgHeight = 150;
+        for (i = 0; i < playerSprites.img.length; i++) {
+            var container = doc.createElement("figure");
+            content.appendChild(container);
+            container.className = "select-player";
+            var image = doc.createElement("img");
+            image.width = imgWidth;
+            image.height = imgHeight;
+            image.src = playerSprites.img[i];
+            image.id = playerSprites.name[i];
+            image.style.marginLeft = "15px";
+            image.style.marginRight = "15px";
+            image.style.border = "3px outset white";
+            
+            // onclick select player screen disappears and game play screen shows up 
+            image.addEventListener("click", function (){
+                var unhide = doc.querySelectorAll(".game-play");
+                for (i=0; i < unhide.length; i++ ) {
+                    unhide[i].style.display = "block";
+                }
+                var hide = doc.querySelectorAll(".select-player");
+                var j = 0;  
+                for (j=0; j < hide.length; j++ ) {
+                    hide[j].style.display = "none";
+                }                    
+            });
+            
+            // select player by clicking the chosen picture
+            // assign the chosen player to mySprite variable
+            image.addEventListener("click", function(){
+                var str = this.src;
+                mySprite = str.slice(str.search('images'));
+            });
+            container.appendChild(image);
+            var t = doc.createElement("figcaption");
+            t.style.color = "white";
+            t.innerHTML = playerSprites.name[i];
+            container.appendChild(t);
+        }
+        
+                
+                
+        // Create Exit button and add to DOM
+        var btnExit = doc.createElement("button");
+        btnExit.id = "btn-exit";
+        btnExit.className = 'start-screen';
+        t = doc.createTextNode("EXIT");
+        btnExit .appendChild(t);
+        doc.body.appendChild(btnExit);
+        btnExit.style.color = "red";
+        btnExit.addEventListener("click", function() {
+            window.close();
+        })
+        // by clicking on "exit" button player closes the game and the window in the browser 
+        
+    };
 
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
@@ -176,7 +324,12 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/Key.png'
     ]);
     Resources.onReady(init);
 
