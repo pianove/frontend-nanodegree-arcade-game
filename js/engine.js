@@ -32,49 +32,98 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime,
-        title = doc.createElement('h1');
-        para = doc.createElement('p');
+        title = doc.createElement('h1'),
+        para = doc.createElement('p'),
+        timer = doc.createElement('p'),
+        canvasCont = doc.createElement('div'),
+        btnPlay = doc.createElement('button'),
+        //default player sprite gets overwritten by player selection
         mySprite = 'images/char-boy.png';
     
     canvas.width = 505;
     canvas.height = 606;
     // add all DOM elements that are required to play the game to class "game-play"
+    canvasCont.id = "viewport";
+    canvasCont.className = "game-play";
+    doc.body.appendChild(canvasCont);
     title.className = "game-play";
-    doc.body.appendChild(title);
+    canvasCont.appendChild(title);
     para.className = "game-play";
-    doc.body.appendChild(para);
+    canvasCont.appendChild(para);
+    timer.className = "game-play";
+    timer.id = "timer";
+    canvasCont.appendChild(timer);
+    btnPlay.id = "btn-play";
+    btnPlay.className = "game-play";
+    btnPlay.innerHTML = "PLAY GAME";
+    canvasCont.appendChild(btnPlay);
     canvas.className = "game-play";
-    doc.body.appendChild(canvas);  
+    canvasCont.appendChild(canvas); 
     
+   
     /* This function serves as the kickoff point for the game loop itself
-     * and handles properly calling the update and render methods.
+     * and handles properly calling the update and render methods within timer function.
      */
     function main() {
-        /* Get our time delta information which is required if your game
-         * requires smooth animation. Because everyone's computer processes
-         * instructions at different speeds we need a constant value that
-         * would be the same for everyone (regardless of how fast their
-         * computer is) - hurray time!
-         */
-        var now = Date.now(),
-            dt = (now - lastTime) / 1000.0;
-
-        /* Call our update/render functions, pass along the time delta to
-         * our update function since it may be used for smooth animation.
-         */
-        update(dt);
-        render();
-
-        /* Set our lastTime variable which is used to determine the time delta
-         * for the next time this function is called.
-         */
-        lastTime = now;
-
-        /* Use the browser's requestAnimationFrame function to call this
+        btnPlay.addEventListener("click", function() {
+            btnPlay.style.display = "none";
+            
+            timer(30000,
+            function (timeleft) { // called every step to update the visible countdown
+                document.getElementById('timer').innerHTML = timeleft+" second(s) left";
+            },
+            function() { // time is over
+                btnPlay.style.display = "block";
+                //to initialize player's position for the next play
+                player.resetPlayer();
+                player.score = 0;
+            }) 
+        });
+    
+    /* Timer function to allow timed game as an Udacious feature. The main game functions  
+     * are inserted here and till timeleft is not over the game loops over and over.
+     * Source : http://stackoverflow.com/questions/1191865/code-for-a-simple-
+     * javascript-countdown-timer
+     */
+    function timer(time,timerOn,complete) {
+        var start = new Date().getTime();
+        var interval = setInterval(function() {
+            var now = time-(new Date().getTime()-start);
+            if( now <= 0) {
+                clearInterval(interval);
+                complete();
+            }
+            else { 
+                currentTime = Date.now();
+                /* Get our time delta information which is required if your game
+                 * requires smooth animation. Because everyone's computer processes
+                 * instructions at different speeds we need a constant value that
+                 * would be the same for everyone (regardless of how fast their
+                 * computer is) - hurray time!
+                 */
+                dt = (currentTime - lastTime) / 1000.0;
+                /* Call our update/render functions, pass along the time delta to
+                * our update function since it may be used for smooth animation.
+                */
+                update(dt);
+                /* Set our lastTime variable which is used to determine the time delta
+                * for the next time this function is called.
+                */
+                lastTime = currentTime;
+                render();          
+                timerOn(Math.floor(now/1000));
+            }
+        },100); // the smaller this number, the more accurate the timer will be
+    }
+        /* I did not use this function as timer() replaces it. 
+         * Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+        //win.requestAnimationFrame(main);
+        
     };
+    
+    
 
     /* This function does some initial setup that should only occur once,
      * particularly setting the lastTime variable that is required for the
@@ -86,9 +135,6 @@ var Engine = (function(global) {
         main();
     }
 
-    /* This function sets the player's sprite based on the clicked image 
-     * setting the mySprite variable.
-     */
     
     
     /* This function is called by main (our game loop) and itself calls all
@@ -271,10 +317,18 @@ var Engine = (function(global) {
             image.style.marginLeft = "15px";
             image.style.marginRight = "15px";
             image.style.border = "3px outset white";
+            // select player by clicking the chosen picture
+            // assign the chosen player to mySprite variable
+            image.addEventListener("click", function(){
+                var str = this.src;
+                mySprite = str.slice(str.search('images'));
+            });
             
-            // onclick select player screen disappears and game play screen shows up 
+            // once player selected, select player screen disappears and game play screen shows up 
             image.addEventListener("click", function (){
                 var unhide = doc.querySelectorAll(".game-play");
+                update(0);
+                render();
                 for (i=0; i < unhide.length; i++ ) {
                     unhide[i].style.display = "block";
                 }
@@ -285,12 +339,7 @@ var Engine = (function(global) {
                 }                    
             });
             
-            // select player by clicking the chosen picture
-            // assign the chosen player to mySprite variable
-            image.addEventListener("click", function(){
-                var str = this.src;
-                mySprite = str.slice(str.search('images'));
-            });
+            
             container.appendChild(image);
             var t = doc.createElement("figcaption");
             t.style.color = "white";
@@ -308,10 +357,10 @@ var Engine = (function(global) {
         btnExit .appendChild(t);
         doc.body.appendChild(btnExit);
         btnExit.style.color = "red";
-        btnExit.addEventListener("click", function() {
-            window.close();
-        })
         // by clicking on "exit" button player closes the game and the window in the browser 
+        btnExit.addEventListener("click", function() {
+            win.close();
+        })
         
     };
 

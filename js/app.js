@@ -57,6 +57,7 @@ Enemy.prototype.render = function() {
 var Player = function() {
     // engine.js mySprite variable gives the value of this.sprite before rendering the player
     this.sprite;
+    
     // setting the initial location
     this.x = PLAYER_INIT_X;
     this.y = PLAYER_INIT_Y;
@@ -164,8 +165,6 @@ Player.prototype.resetPlayer = function() {
     this.y = PLAYER_INIT_Y;
     newPos[0] = this.x;
     newPos[1] = this.y;
-    // draw player on canvas
-    this.render();
 };
 
 // Place all enemy objects in an array called allEnemies
@@ -175,6 +174,8 @@ var allEnemies = [];
 for (i=0; i<2; i++) {
     for (j=0; j<3; j++) {
         enemy = new Enemy();
+        //setting initial col
+        enemy.x = j * TILE_WIDTH;
         var row = 0;
         // setting row
         enemy.y += ((row + j) * TILE_HEIGHT);

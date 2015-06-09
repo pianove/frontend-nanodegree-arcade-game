@@ -1,17 +1,32 @@
 body {
     text-align: center;
     background-color: black;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
     color: white;
     text-transform: uppercase;
-    padding: 0;
     margin: 0;
+    padding: 0;
 }
 
 canvas {
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: transparent;    
+}
+
+#viewport {
+    position: relative;
+    width: 100%;
+}
+
+#btn-play {
+    position: absolute;
+    top: 40%;
+    left: 40%;
 }
 
 p {
