@@ -34,9 +34,8 @@ jumping off screen 10 points per jump
 Successfully jumping Player to reach the water  500 points
 Successfully jumping 5 Players to reach the water 1000 points
 COLLECTING A GEM 200 points
-Colliding with an enemy -50 points
+Colliding with an enemy -100 points
 
-Every time you score 10,000 points and have fewer than 4 Players left, you'll get
-another Player! 
+Every time you score 10,000 points and have fewer than 4 Players left, you'll get another Player! 
 
 

@@ -5,8 +5,10 @@ PLAYER_INIT_X = 200;
 PLAYER_INIT_Y = 400;
 ENEMY_INIT_X = 0;
 ENEMY_INIT_Y = 60;
-SPRITE_WIDTH = 101;
-SPRITE_HEIGHT = 171;
+GEM_INIT_X = 700;
+GEM_INIT_Y = 0;
+SPRITE_WIDTH = 100;
+SPRITE_HEIGHT = 172;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -42,8 +44,8 @@ Enemy.prototype.update = function(dt) {
     enemy.colludes = doesCollude;
     if (enemy.colludes (player.x, player.y, this.x, this.y)) {
         //reduce extra 50 points due to collision
-        if (player.score > 50) {
-            player.score -= 50;
+        if (player.score > 100) {
+            player.score -= 100;
         }
         else {
             player.score = 0;
@@ -59,7 +61,7 @@ Enemy.prototype.render = function() {
 
 
 var Player = function() {
-    // engine.js mySprite variable gives the value of this.sprite before rendering the player
+    
     this.sprite;
     
     // setting the initial location
@@ -76,6 +78,7 @@ Player.prototype.update = function() {
 };
 
 Player.prototype.render = function() {
+    // engine.js mySprite variable gives the value to this.sprite before rendering the player
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, SPRITE_WIDTH, SPRITE_HEIGHT);
 };
 
@@ -168,8 +171,75 @@ Player.prototype.resetPlayer = function() {
     newPos[1] = this.y;
 };
 
-// Place all enemy objects in an array called allEnemies
+var Gem = function() {
+    this.sprite;
+    // setting the initial location to off screen
+    this.x = GEM_INIT_X;
+    this.y = GEM_INIT_Y;
+    // setting initial value
+    this.collected = false;
+};
 
+Gem.prototype.update = function() {
+    // updates only if player collects gem
+    gem.colludes = doesCollude;
+    if (gem.colludes (this.x, this.y, player.x, player.y)) {
+        // gem moved off screen
+        this.x = GEM_INIT_X;
+        this.y = GEM_INIT_Y;
+        this.collected = true;
+        // add 200 extra points to score
+        player.score += 200;
+        console.log(doesCollude)
+    };
+};
+
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y, SPRITE_WIDTH / 2, SPRITE_HEIGHT / 2);
+};
+// sets gem's position on a tile within canvas and on the paved block
+Gem.prototype.resetGem = function() {
+    this.x = Math.round(Math.random() * 4) * TILE_WIDTH +  (TILE_WIDTH - (SPRITE_WIDTH / 2)) / 2;
+    this.y = Math.round(Math.random() * 2) * TILE_HEIGHT + (2 * ENEMY_INIT_Y);
+    this.collected = false;
+    index = allGems.indexOf(this);
+    //make sure two gems do not occupy the same place
+    for (i = 0; i < index; i++){
+        if (this.x == allGems[i].x && this.y == allGems[i].y){
+            this.resetGem();
+        }
+    }
+    for (i = 0; i> index && i < allGems.length; i++) {
+         if (this.x == allGems[i].x && this.y == allGems[i].y){
+            this.resetGem();
+        }
+    }
+};
+
+//Place all gems objects in an array called allGems
+var allGems = [];
+var gemImages = [
+    'images/Gem Green.png',
+    'images/Gem Orange.png',
+    'images/Gem Blue.png'
+]; 
+
+numGems = 5;
+    
+//create gems at random places on the paved block
+gemCount = 0;
+for (i = 0; i < numGems; i++) {
+    gem = new Gem();
+    gem.sprite = gemImages[gemCount];
+    if (gemCount >= gemImages.length - 1) {
+        gemCount = 0;
+    }
+    else gemCount++;
+    // pos x, y on a tile within the canvas and on the paved block
+    gem.resetGem();
+    allGems.push(gem);
+}
+// Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 // create two enemies per row
 for (i=0; i<2; i++) {
