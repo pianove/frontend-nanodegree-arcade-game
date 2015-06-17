@@ -32,17 +32,21 @@ Enemy.prototype.update = function(dt) {
     this.x += this.speed * dt;
     
     // launch enemy back to canvas at random speed 
-    if (this.x > width) {
-        this.x = -SPRITE_WIDTH;
+    if (this.x > width + SPRITE_WIDTH) {
+
+        this.x -= (width+2 * SPRITE_WIDTH);
         // varies the speed
-        this.speed = (Math.random() * 350) + 50;
-        this.x += this.speed * dt;
+        //this.speed = (Math.random() * 350) + 150;
     } 
-    // reset player and reduce score by one up to 0 when enemy and player collude
+    // reset player and reduce score by 50 points  up to 0 when enemy and player collude
     enemy.colludes = doesCollude;
     if (enemy.colludes (player.x, player.y, this.x, this.y)) {
-        if (player.score > 0) {
-            player.score--;
+        //reduce extra 50 points due to collision
+        if (player.score > 50) {
+            player.score -= 50;
+        }
+        else {
+            player.score = 0;
         }
         player.resetPlayer();
     }
@@ -75,7 +79,7 @@ Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y, SPRITE_WIDTH, SPRITE_HEIGHT);
 };
 
-// stores position to send to Player.update() function
+// stores player's position to send to Player.update() function
 var newPos = [PLAYER_INIT_X,PLAYER_INIT_Y];
 // This function handles players' move upon a key pressed. Makes sure that Player does not move off screen. If the Player reaches the water the game is reset.   
 Player.prototype.handleInput = function(keyCode) {    
@@ -85,47 +89,44 @@ Player.prototype.handleInput = function(keyCode) {
 
     // move to left
     if (keyCode === 'left') {
-     // player.x -= TILE_WIDTH;
-        deltaX -= TILE_WIDTH;
-        
+        deltaX -= TILE_WIDTH;        
     }    
     
     // move to right
     if (keyCode === 'right') {
-      //player.x += TILE_WIDTH;
-        deltaX += TILE_WIDTH;
-        
+        deltaX += TILE_WIDTH;        
     } 
 
-    // player runs left or right off screen 
-    if (player.off (this.x+deltaX, this.y+deltaY)) {
-        //player.x = oldX;
-        deltaX = 0;
-    }    
+    // move down
+    if (keyCode === 'down') {
+        deltaY += TILE_HEIGHT;
+    }
     
     // move up
     if (keyCode === 'up') {
-      //player.y -=TILE_HEIGHT;
         deltaY -= TILE_HEIGHT; 
     } 
     
-    // move down
-    if (keyCode === 'down') {
-      //player.y += TILE_HEIGHT;
-        deltaY += TILE_HEIGHT; 
-      // player runs down off screen    
-      if (player.off (this.x+deltaX, this.y+deltaY)) {
-        //player.y = oldY;
+    // player runs off screen 
+    if (player.off (this.x+deltaX, this.y+deltaY)) {
+        //if reach left or right edge
+        deltaX = 0;
+        //if reach bottom
         deltaY = 0;
-      }        
+    }    
+    else {
+        // 10 points per successful jump
+        player.score += 10;
     }
+    
     
     newPos[0] = this.x + deltaX;
     newPos[1] = this.y + deltaY;
 
     // check if water block reached
     if (newPos[1] < 60) {
-        this.score++;
+        // add extra 500 points to reach the water
+        this.score+=500;
         // reset player to initial position
         player.resetPlayer();
     }
@@ -174,13 +175,13 @@ var allEnemies = [];
 for (i=0; i<2; i++) {
     for (j=0; j<3; j++) {
         enemy = new Enemy();
-        //setting initial col
-        enemy.x = j * TILE_WIDTH;
+        //setting initial col, random distance from first bug
+        enemy.x = j * ((Math.random() * 4) + 2) * TILE_WIDTH;
         var row = 0;
         // setting row
         enemy.y += ((row + j) * TILE_HEIGHT);
         // setting random speed
-        enemy.speed = (Math.random() * 450) + 100;
+        enemy.speed = (Math.random() * 350) + 150;
         allEnemies.push(enemy);
         row++;
     }

@@ -205,7 +205,7 @@ var Engine = (function(global) {
         /* Add score to DOM 
         */
         title.innerHTML = "score";
-        para.innerHTML = player.score;
+        para.innerHTML = player.score + " points";
         renderEntities()
     }
 
