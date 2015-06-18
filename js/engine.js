@@ -235,8 +235,7 @@ var Engine = (function(global) {
     }
 
     
-    /* This function creates the initial menu to start the game or to exit. 
-    * Then proceeds to player selection screen. 
+    /* This function creates the initial menu to start the game, display game rules and to exit.  
     * It's only called once by the init() method.
      */
     function reset() {
@@ -356,9 +355,7 @@ var Engine = (function(global) {
             t.style.color = "white";
             t.innerHTML = playerSprites.name[i];
             container.appendChild(t);
-        }
-        
-                
+        }                
                 
         // Create Exit button and add to DOM
         var btnExit = doc.createElement("button");
@@ -371,10 +368,45 @@ var Engine = (function(global) {
         // by clicking on "exit" button the game and the window  in the browser are closed
         btnExit.addEventListener("click", function() {
             win.close();
-        })
-        
+        }) 
     };
-
+    
+    //create game rules button
+    var btnGameRules = doc.createElement("button");
+        btnGameRules.id = "btn-game-rules";
+        btnGameRules.className = 'start-screen';
+        var t = doc.createTextNode("Game Rules");
+        btnGameRules.appendChild(t);
+        doc.body.appendChild(btnGameRules);
+        btnGameRules.style.color = "green";
+        // On click hide initial screen and get to Game rules screen
+        btnGameRules.addEventListener('click', function (){            
+            var i;
+            var hide = doc.querySelectorAll(".start-screen");
+            for (i=0; i < hide.length; i++ ) {
+                hide[i].style.display = "none";            
+            }
+            function gameRulesload (){
+                var contentText = "<div id='game-rules-content'><h1>GAME RULES</h1><p>You'll start the game by selecting an image for your player character.<br>At start you have 5 Players. The goal is to get the player one at a time to reach the water within 30 seconds, without colliding into any one of the enemies (bugs).<br>The first Player is shown on the greengrass in the middle at the starting square. The remaining Players are shown on the lower lefthand corner of the screen.<br>The player can move left, right, up and down. The enemies move in varying speeds on the paved block portion of the scene. Once a player collides with an enemy, the player will be moved back to starting square and loose points. Once the player reaches the water will be moved back to starting square and within your timeframe you can move it again to water.Your player can collect gems that are thrown on the paved block for extra points.<br>Once all 5 Players reached the water the game is won.<br><h2>TIMING</h2>You have only 30 seconds to move one Player from the green zone to reach the water.Time is monitored and remaining seconds displayed at the top of the screen right under SCORE.<br>If you run out of time before you get Player to water, you'll lose him.<h2>SCORING</h2>Your score is displayed at the top of the screen throughout the game. Points accumulate as follows:<br><ul><li>Successfully jumping Player without jumping off screen adds 10 points per jump</li><li>Successfully jumping Player to reach the water  adds 500 points</li><li>Successfully jumping 5 Players to reach the water adds 1000 points</li><li>Collecting a gem adds 200 points</li><li>Colliding with an enemy reduces 100 points</li></ul>Every time you score 10,000 points and have fewer than 4 Players left, you'll get another Player!<br><h3>Enjoy the game as I enjoyed coding it! Hope you find my game Udacious!</h3><button id='btnBack'>Back</button></p></div>";
+                //var content = doc.body.createTextNode(contentText);
+                //??????
+                $("body").append(contentText);
+                // On click hide initial screen and get to start screen
+                btnBack.addEventListener('click', function (){            
+                    var i;
+                    var hide = doc.getElementById("game-rules-content");
+                    for (i=0; i < hide.length; i++ ) {
+                        hide[i].style.display = "none";            
+                    }                 
+                    var unHide = doc.querySelectorAll(".start-screen");
+                    for (i=0; i < unHide.length; i++ ) {
+                        unHide[i].style.display = "block";            
+                    }
+                });
+        }
+    });
+    
+    
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.

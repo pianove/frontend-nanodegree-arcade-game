@@ -8,8 +8,14 @@ body {
 h1 {
     color: white;
     text-transform: uppercase;
-    margin: 0;
-    padding: 0;
+    margin: auto;
+    padding: auto;
+}
+h1,
+h2,
+h3,
+h4 {
+    text-align: center;
 }
 
 canvas {
@@ -30,7 +36,7 @@ canvas {
 }
 
 p {
-    color: red;
+    color: white;
     margin: 0;
     padding: 0;
 }
@@ -53,3 +59,10 @@ img:hover {
     cursor: pointer;
 }
 
+#game-rules-content {
+    color: white;
+    margin: 50px;
+    padding: 15px;
+    text-align: left;
+    border: solid 1px white;
+}
