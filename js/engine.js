@@ -14,8 +14,7 @@
  * a little simpler to work with.
  *
  * NOTE that I chosen not to use jQuery library in this project as I wanted to
- * get a practice in DOM handling. It definitely multiplies codelines but I 
- * learnt tremendously about DOM attributes, events and debugging. 
+ * get a practice in DOM handling. 
  */
 
 
@@ -37,6 +36,8 @@ var Engine = (function(global) {
         timer = doc.createElement('p'),
         canvasCont = doc.createElement('div'),
         btnPlay = doc.createElement('button'),
+        btnBack = doc.createElement('button'),
+        btnExit = doc.createElement('button'),
         //default player sprite gets overwritten by player selection
         mySprite = 'images/char-boy.png';
     
@@ -56,7 +57,17 @@ var Engine = (function(global) {
     btnPlay.id = "btn-play";
     btnPlay.className = "game-play";
     btnPlay.innerHTML = "PLAY GAME";
+    btnBack.id = "btn-back";
+    btnBack.className = "game-play";
+    btnBack.innerHTML = "BACK";
+    //exit button added to start-screen and to game-play screen
+    btnExit.id = "btn-exit";
+    btnExit.innerHTML = "EXIT";
+    btnExit.style.color = "red";
+    //add buttons to canvas
     canvasCont.appendChild(btnPlay);
+    canvasCont.appendChild(btnBack);
+    canvasCont.appendChild(btnExit);
     canvas.className = "game-play";
     canvasCont.appendChild(canvas); 
     
@@ -67,6 +78,8 @@ var Engine = (function(global) {
     function main() {
         btnPlay.addEventListener("click", function() {
             btnPlay.style.display = "none";
+            btnBack.style.display = "none";
+            btnExit.style.display = "none";
             
             timer(30000,
             function (timeleft) { // called every step to update the visible countdown
@@ -74,6 +87,8 @@ var Engine = (function(global) {
             },
             function() { // time is over
                 btnPlay.style.display = "block";
+                btnBack.style.display = "block";
+                btnExit.style.display = "block";
                 //to initialize player's position for the next play
                 player.resetPlayer();
                 player.score = 0;
@@ -82,6 +97,23 @@ var Engine = (function(global) {
                     gem.resetGem();
                 })
             }) 
+        });
+        
+        btnBack.addEventListener("click", function() {
+            var play = doc.querySelectorAll('.game-play');
+            // Hide all elements within that class 
+            var i;
+            for (i =0; i < play.length; i++) {
+                play[i].style.display = "none";    
+            }
+            btnExit.style.display = "none";
+            doc.getElementById("select-player-title").style.display = "block";
+            doc.getElementById("select-player-content").style.display = "block";
+            var hide = doc.querySelectorAll(".select-player");
+            var j = 0;  
+            for (j=0; j < hide.length; j++ ) {
+                    hide[j].style.display = "inline-block";
+            }                    
         });
     
     /* Timer function to allow timed game as an Udacious feature. The main game functions  
@@ -119,7 +151,7 @@ var Engine = (function(global) {
             }
         },100); // the smaller this number, the more accurate the timer will be
     }
-        /* I did not use this function as timer() replaces it. 
+        /* Author: I did not use this function as timer() replaces it. 
          * Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
@@ -230,7 +262,7 @@ var Engine = (function(global) {
          */
         allEnemies.forEach(function(enemy) {
            enemy.render();            
-        });
+        });        
         player.render();        
     }
 
@@ -266,15 +298,13 @@ var Engine = (function(global) {
         }
         // Set game title element and their attributes, unique css values and add to DOM
         var startScreen = doc.createElement('h1');
-        startScreen.className = 'start-screen';
+        startScreen.className = 'start-screen-title';
         doc.body.appendChild(startScreen);
         startScreen.innerHTML = "frogger arcade game";
         startScreen.style.fontStyle = '900, Georgia, serif';
         startScreen.style.color = 'red';
         startScreen.style.paddingTop = "150px";
-        
-        // Create button elements to start the game and to exit from the game and add to DOM
-        
+        // Create button elements and add to DOM
         // Start game button 
         var btnStart = doc.createElement("button");
         btnStart.id = "btn-start";
@@ -290,6 +320,7 @@ var Engine = (function(global) {
             for (i=0; i < hide.length; i++ ) {
                 hide[i].style.display = "none";
             }
+            doc.querySelector(".start-screen-title").style.display = "none";
             var unhide = doc.getElementById("select-player-content");
             unhide.style.display = "inline-flex";
             unhide = doc.getElementById("select-player-title");
@@ -342,6 +373,7 @@ var Engine = (function(global) {
                 for (i=0; i < unhide.length; i++ ) {
                     unhide[i].style.display = "block";
                 }
+                btnExit.style.display = "inline-block";
                 var hide = doc.querySelectorAll(".select-player");
                 var j = 0;  
                 for (j=0; j < hide.length; j++ ) {
@@ -356,56 +388,60 @@ var Engine = (function(global) {
             t.innerHTML = playerSprites.name[i];
             container.appendChild(t);
         }                
-                
-        // Create Exit button and add to DOM
-        var btnExit = doc.createElement("button");
-        btnExit.id = "btn-exit";
-        btnExit.className = 'start-screen';
-        t = doc.createTextNode("EXIT");
-        btnExit .appendChild(t);
-        doc.body.appendChild(btnExit);
-        btnExit.style.color = "red";
-        // by clicking on "exit" button the game and the window  in the browser are closed
-        btnExit.addEventListener("click", function() {
-            win.close();
-        }) 
-    };
-    
-    //create game rules button
-    var btnGameRules = doc.createElement("button");
+          
+         //create game rules button
+        var btnGameRules = doc.createElement("button");
         btnGameRules.id = "btn-game-rules";
         btnGameRules.className = 'start-screen';
-        var t = doc.createTextNode("Game Rules");
+        var t = doc.createTextNode("GAME RULES");
         btnGameRules.appendChild(t);
         doc.body.appendChild(btnGameRules);
         btnGameRules.style.color = "green";
         // On click hide initial screen and get to Game rules screen
         btnGameRules.addEventListener('click', function (){            
+            doc.querySelector(".start-screen-title").style.display = "none";
             var i;
             var hide = doc.querySelectorAll(".start-screen");
             for (i=0; i < hide.length; i++ ) {
                 hide[i].style.display = "none";            
             }
-            function gameRulesload (){
-                var contentText = "<div id='game-rules-content'><h1>GAME RULES</h1><p>You'll start the game by selecting an image for your player character.<br>At start you have 5 Players. The goal is to get the player one at a time to reach the water within 30 seconds, without colliding into any one of the enemies (bugs).<br>The first Player is shown on the greengrass in the middle at the starting square. The remaining Players are shown on the lower lefthand corner of the screen.<br>The player can move left, right, up and down. The enemies move in varying speeds on the paved block portion of the scene. Once a player collides with an enemy, the player will be moved back to starting square and loose points. Once the player reaches the water will be moved back to starting square and within your timeframe you can move it again to water.Your player can collect gems that are thrown on the paved block for extra points.<br>Once all 5 Players reached the water the game is won.<br><h2>TIMING</h2>You have only 30 seconds to move one Player from the green zone to reach the water.Time is monitored and remaining seconds displayed at the top of the screen right under SCORE.<br>If you run out of time before you get Player to water, you'll lose him.<h2>SCORING</h2>Your score is displayed at the top of the screen throughout the game. Points accumulate as follows:<br><ul><li>Successfully jumping Player without jumping off screen adds 10 points per jump</li><li>Successfully jumping Player to reach the water  adds 500 points</li><li>Successfully jumping 5 Players to reach the water adds 1000 points</li><li>Collecting a gem adds 200 points</li><li>Colliding with an enemy reduces 100 points</li></ul>Every time you score 10,000 points and have fewer than 4 Players left, you'll get another Player!<br><h3>Enjoy the game as I enjoyed coding it! Hope you find my game Udacious!</h3><button id='btnBack'>Back</button></p></div>";
-                //var content = doc.body.createTextNode(contentText);
-                //??????
-                $("body").append(contentText);
-                // On click hide initial screen and get to start screen
-                btnBack.addEventListener('click', function (){            
-                    var i;
-                    var hide = doc.getElementById("game-rules-content");
-                    for (i=0; i < hide.length; i++ ) {
-                        hide[i].style.display = "none";            
-                    }                 
-                    var unHide = doc.querySelectorAll(".start-screen");
-                    for (i=0; i < unHide.length; i++ ) {
-                        unHide[i].style.display = "block";            
-                    }
-                });
+            gameRulesload()
+        });
+        
+        
+        //src: http://stackoverflow.com/questions/9614932/best-way-to-create-large-static-dom-elements-in-javascript
+        function gameRulesload (){
+            doc.getElementById("game-rules-content").style.display = "block";
+            // On click hide initial screen and get to start screen
+            btnBackFromRules.addEventListener('click', function (){            
+                var i;
+                doc.getElementById("game-rules-content").style.display = "none";
+                doc.querySelector(".start-screen-title").style.display = "block";
+                var unHide = doc.querySelectorAll(".start-screen");
+                for (i=0; i < unHide.length; i++ ) {
+                    unHide[i].style.display = "inline-block";            
+                }
+            });
         }
-    });
-    
+        
+        
+        // Add exit button to start screen
+        btnExit.className = 'start-screen';
+        doc.body.appendChild(btnExit);
+        btnExit.style.display = "inline-flex";
+        // by clicking on "exit" button the game and the window  in the browser are closed
+        btnExit.addEventListener("click", function() {
+            win.close();
+        })
+        
+        // Create Game Rules screen DOM elements
+        var gameRulesContent = doc.createElement("div");
+        gameRulesContent.id = "game-rules-content";
+        doc.body.appendChild(gameRulesContent);
+        var contentText = "<h1>GAME RULES</h1><p>You'll start the game by selecting an image for your player character.<br>The goal is to get the player to reach the water within 30 seconds, as many times as you can by reaching highest score.<br>At start the Player is shown on the greengrass in the middle at the starting square. The player can move left, right, up and down. The enemies move in varying speeds on the paved block portion of the scene. Once a player collides with an enemy, the player will be moved back to starting square and loose points. Once the player reaches the water will be moved back to starting square and within your timeframe you can move it again to water.Your player can collect gems that are thrown on the paved block for extra points.<br><h2>TIMING</h2><p>You have only 30 seconds to move one Player from the green zone to reach the water.Time is monitored and remaining seconds displayed at the top of the screen right under SCORE.</p><h2>SCORING</h2><p>Your score is displayed at the top of the screen throughout the game. Points accumulate as follows:<br><ul><li>Successfully jumping Player without jumping off screen adds 10 points per jump</li><li>Successfully jumping Player to reach the water  adds 500 points</li><li>Collecting a gem adds 200 points</li><li>Colliding with an enemy reduces 100 points</li></ul><h3>Enjoy the game as I enjoyed coding it! Hope you find my game Udacious!</h3><button id='btnBackFromRules'>Back</button>";
+        gameRulesContent.innerHTML = contentText;
+        doc.getElementById("game-rules-content").style.display = "none";
+    };
     
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when

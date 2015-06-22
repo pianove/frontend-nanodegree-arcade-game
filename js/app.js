@@ -38,9 +38,9 @@ Enemy.prototype.update = function(dt) {
 
         this.x -= (width+2 * SPRITE_WIDTH);
         // varies the speed
-        //this.speed = (Math.random() * 350) + 150;
+        this.speed = (Math.random() * 350) + 150;
     } 
-    // reset player and reduce score by 50 points  up to 0 when enemy and player collude
+    // reset player and reduce score by 100 points  up to 0 when enemy and player collude
     enemy.colludes = doesCollude;
     if (enemy.colludes (player.x, player.y, this.x, this.y)) {
         //reduce extra 50 points due to collision
@@ -203,15 +203,17 @@ Gem.prototype.resetGem = function() {
     this.y = Math.round(Math.random() * 2) * TILE_HEIGHT + (2 * ENEMY_INIT_Y);
     this.collected = false;
     index = allGems.indexOf(this);
-    //make sure two gems do not occupy the same place
-    for (i = 0; i < index; i++){
-        if (this.x == allGems[i].x && this.y == allGems[i].y){
-            this.resetGem();
+    if (allGems.length > 1) {
+        //make sure two gems do not occupy the same place
+        for (i = 0; i < index; i++){
+            if (this.x == allGems[i].x && this.y == allGems[i].y){
+                this.resetGem();
+            }
         }
-    }
-    for (i = 0; i> index && i < allGems.length; i++) {
-         if (this.x == allGems[i].x && this.y == allGems[i].y){
-            this.resetGem();
+        for (i = 0; i> index && i < allGems.length; i++) {
+             if (this.x == allGems[i].x && this.y == allGems[i].y){
+                this.resetGem();
+            }
         }
     }
 };
@@ -228,17 +230,19 @@ numGems = 5;
     
 //create gems at random places on the paved block
 gemCount = 0;
-for (i = 0; i < numGems; i++) {
+for (j = 0; j < numGems; j++) {
     gem = new Gem();
     gem.sprite = gemImages[gemCount];
-    if (gemCount >= gemImages.length - 1) {
+    if (gemCount >= (gemImages.length - 1)) {
         gemCount = 0;
     }
-    else gemCount++;
+    else {
+        gemCount++;
+    }
     // pos x, y on a tile within the canvas and on the paved block
     gem.resetGem();
     allGems.push(gem);
-}
+};
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
 // create two enemies per row

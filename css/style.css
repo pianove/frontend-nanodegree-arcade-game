@@ -6,16 +6,17 @@ body {
 }
 
 h1 {
-    color: white;
     text-transform: uppercase;
     margin: auto;
     padding: auto;
 }
+
 h1,
 h2,
 h3,
 h4 {
     text-align: center;
+    color: white;
 }
 
 canvas {
@@ -31,8 +32,23 @@ canvas {
 
 #btn-play {
     position: absolute;
-    top: 40%;
-    left: 40%;
+    top: 25%;
+    left: 43%;
+    right: 43%;
+}
+
+#btn-back {
+    position: absolute;
+    top: 37%;
+    left: 43%;
+    right: 43%
+}
+
+#btn-exit {
+    position: absolute;
+    top: 51%;
+    left: 43%;
+    right: 44%;
 }
 
 p {
