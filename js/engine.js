@@ -17,7 +17,7 @@
  * get a practice in DOM handling. 
  */
 
-
+"use strict";
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -45,7 +45,7 @@ var Engine = (function(global) {
     canvas.height = 606;
     // add all DOM elements that are required to play the game to class "game-play"
     canvasCont.id = "viewport";
-    canvasCont.className = "game-play";
+    canvasCont.className = "view game-play";
     doc.body.appendChild(canvasCont);
     title.className = "game-play";
     canvasCont.appendChild(title);
@@ -55,13 +55,14 @@ var Engine = (function(global) {
     timer.id = "timer";
     canvasCont.appendChild(timer);
     btnPlay.id = "btn-play";
-    btnPlay.className = "game-play";
+    btnPlay.className = "play game-play";
     btnPlay.innerHTML = "PLAY GAME";
     btnBack.id = "btn-back";
-    btnBack.className = "game-play";
+    btnBack.className = "back game-play";
     btnBack.innerHTML = "BACK";
     //exit button added to start-screen and to game-play screen
     btnExit.id = "btn-exit";
+    btnExit.className = "exit game-play";
     btnExit.innerHTML = "EXIT";
     btnExit.style.color = "red";
     //add buttons to canvas
@@ -95,8 +96,8 @@ var Engine = (function(global) {
                 // change gems' positions
                 allGems.forEach(function(gem) {
                     gem.resetGem();
-                })
-            }) 
+                });
+            }); 
         });
         
         btnBack.addEventListener("click", function() {
@@ -130,14 +131,14 @@ var Engine = (function(global) {
                 complete();
             }
             else { 
-                currentTime = Date.now();
+                var currentTime = Date.now();
                 /* Get our time delta information which is required if your game
                  * requires smooth animation. Because everyone's computer processes
                  * instructions at different speeds we need a constant value that
                  * would be the same for everyone (regardless of how fast their
                  * computer is) - hurray time!
                  */
-                dt = (currentTime - lastTime) / 1000.0;
+                var dt = (currentTime - lastTime) / 1000.0;
                 /* Call our update/render functions, pass along the time delta to
                 * our update function since it may be used for smooth animation.
                 */
@@ -157,7 +158,7 @@ var Engine = (function(global) {
          */
         //win.requestAnimationFrame(main);
         
-    };
+    }
     
     
 
@@ -180,24 +181,48 @@ var Engine = (function(global) {
         updateEntities(dt);
     }
 
+    // This function detects if an entity's position is off screen
+    var offScreen = function(posX,posY) {
+        var x = posX;
+        var y = posY;
+        if ((x >= (width-10) || x < 0) || (y > (height-2 * TILE_HEIGHT))) {
+            return true;
+        }
+        else {
+            return false; 
+        }
+    };
     
+    
+    // This function detects if two entities collude and returns true if they collude otherwise return false.
+    var doesCollude = function checkCollisions (x1, y1, x2, y2) {
+        if ((x1 >= x2) && 
+           ((x2 + TILE_WIDTH) >= x1) && 
+           (y1 >= y2) &&
+           ((y2 + TILE_HEIGHT)> y1)) {
+            return true;
+        }
+            return false;    
+    };    
     /* This is called by the update function  and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
      * their update() methods. It will then call the collision function to 
      * reset Player when collision. It will then call the update function 
      * for your player object. These update methods should focus purely on
-     * updating the data/properties related to  the object. Do your drawing
-     * in your render methods.
+     * updating the data/properties related to  the object. 
      */
     function updateEntities(dt) {
        allEnemies.forEach(function(enemy) {
+            enemy.colludes = doesCollude;
             enemy.update(dt);
-       })
+       });
        player.sprite = mySprite;
+       player.off = offScreen;
        player.update();
        allGems.forEach(function (gem) {
-            gem.update();
-       })       
+           gem.colludes = doesCollude; 
+           gem.update();
+       });       
     }
     
     
@@ -244,14 +269,13 @@ var Engine = (function(global) {
         */
         title.innerHTML = "score";
         para.innerHTML = player.score + " points";
-        renderEntities()
+        renderEntities();
     }
 
     /* This function is called by the render function and is called on each game
      * tick. It's purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js
      */
-    
     function renderEntities() {
         //Add collectible gems to canvas 
         allGems.forEach(function(gem) {
@@ -373,7 +397,8 @@ var Engine = (function(global) {
                 for (i=0; i < unhide.length; i++ ) {
                     unhide[i].style.display = "block";
                 }
-                btnExit.style.display = "inline-block";
+                btnExit.className = "exit";
+                btnExit.style.display = "block";
                 var hide = doc.querySelectorAll(".select-player");
                 var j = 0;  
                 for (j=0; j < hide.length; j++ ) {
@@ -383,18 +408,18 @@ var Engine = (function(global) {
             
             
             container.appendChild(image);
-            var t = doc.createElement("figcaption");
-            t.style.color = "white";
-            t.innerHTML = playerSprites.name[i];
-            container.appendChild(t);
+            var fig = doc.createElement("figcaption");
+            fig.style.color = "white";
+            fig.innerHTML = playerSprites.name[i];
+            container.appendChild(fig);
         }                
           
          //create game rules button
         var btnGameRules = doc.createElement("button");
         btnGameRules.id = "btn-game-rules";
         btnGameRules.className = 'start-screen';
-        var t = doc.createTextNode("GAME RULES");
-        btnGameRules.appendChild(t);
+        title = doc.createTextNode("GAME RULES");
+        btnGameRules.appendChild(title);
         doc.body.appendChild(btnGameRules);
         btnGameRules.style.color = "green";
         // On click hide initial screen and get to Game rules screen
@@ -405,7 +430,7 @@ var Engine = (function(global) {
             for (i=0; i < hide.length; i++ ) {
                 hide[i].style.display = "none";            
             }
-            gameRulesload()
+            gameRulesload();
         });
         
         
@@ -432,16 +457,17 @@ var Engine = (function(global) {
         // by clicking on "exit" button the game and the window  in the browser are closed
         btnExit.addEventListener("click", function() {
             win.close();
-        })
+        });
         
         // Create Game Rules screen DOM elements
         var gameRulesContent = doc.createElement("div");
         gameRulesContent.id = "game-rules-content";
+        gameRulesContent.className = "rules-content";
         doc.body.appendChild(gameRulesContent);
         var contentText = "<h1>GAME RULES</h1><p>You'll start the game by selecting an image for your player character.<br>The goal is to get the player to reach the water within 30 seconds, as many times as you can by reaching highest score.<br>At start the Player is shown on the greengrass in the middle at the starting square. The player can move left, right, up and down. The enemies move in varying speeds on the paved block portion of the scene. Once a player collides with an enemy, the player will be moved back to starting square and loose points. Once the player reaches the water will be moved back to starting square and within your timeframe you can move it again to water.Your player can collect gems that are thrown on the paved block for extra points.<br><h2>TIMING</h2><p>You have only 30 seconds to move one Player from the green zone to reach the water.Time is monitored and remaining seconds displayed at the top of the screen right under SCORE.</p><h2>SCORING</h2><p>Your score is displayed at the top of the screen throughout the game. Points accumulate as follows:<br><ul><li>Successfully jumping Player without jumping off screen adds 10 points per jump</li><li>Successfully jumping Player to reach the water  adds 500 points</li><li>Collecting a gem adds 200 points</li><li>Colliding with an enemy reduces 100 points</li></ul><h3>Enjoy the game as I enjoyed coding it! Hope you find my game Udacious!</h3><button id='btnBackFromRules'>Back</button>";
         gameRulesContent.innerHTML = contentText;
         doc.getElementById("game-rules-content").style.display = "none";
-    };
+    }
     
     /* Go ahead and load all of the images we know we're going to need to
      * draw our game level. Then set init as the callback method, so that when

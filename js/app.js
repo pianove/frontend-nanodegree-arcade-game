@@ -1,13 +1,15 @@
+"use strict";
+
 //Constant values 
-TILE_WIDTH = 100;
-TILE_HEIGHT = 80; 
-PLAYER_INIT_X = 200;
-PLAYER_INIT_Y = 400;
-ENEMY_INIT_X = 0;
-ENEMY_INIT_Y = 60;
-GEM_INIT_X = 700;
-GEM_INIT_Y = 0;
-SPRITE_WIDTH = 100;
+const TILE_WIDTH = 100,
+TILE_HEIGHT = 80, 
+PLAYER_INIT_X = 200,
+PLAYER_INIT_Y = 400,
+ENEMY_INIT_X = 0,
+ENEMY_INIT_Y = 60,
+GEM_INIT_X = 700,
+GEM_INIT_Y = 0,
+SPRITE_WIDTH = 100,
 SPRITE_HEIGHT = 172;
 
 // Enemies our player must avoid
@@ -21,7 +23,7 @@ var Enemy = function() {
     this.y = ENEMY_INIT_Y;
     // setting the initial speed 
     this.speed = 0;
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -41,8 +43,8 @@ Enemy.prototype.update = function(dt) {
         this.speed = (Math.random() * 350) + 150;
     } 
     // reset player and reduce score by 100 points  up to 0 when enemy and player collude
-    enemy.colludes = doesCollude;
-    if (enemy.colludes (player.x, player.y, this.x, this.y)) {
+    //this.colludes = doesCollude;
+    if (this.colludes (player.x, player.y, this.x, this.y)) {
         //reduce extra 50 points due to collision
         if (player.score > 100) {
             player.score -= 100;
@@ -52,7 +54,7 @@ Enemy.prototype.update = function(dt) {
         }
         player.resetPlayer();
     }
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -60,16 +62,14 @@ Enemy.prototype.render = function() {
 };
 
 
-var Player = function() {
-    
+var Player = function() {  
     this.sprite;
-    
     // setting the initial location
     this.x = PLAYER_INIT_X;
     this.y = PLAYER_INIT_Y;
     // setting initial score
     this.score = 0;
-}
+};
 
 // Update the player's position
 Player.prototype.update = function() {
@@ -86,7 +86,6 @@ Player.prototype.render = function() {
 var newPos = [PLAYER_INIT_X,PLAYER_INIT_Y];
 // This function handles players' move upon a key pressed. Makes sure that Player does not move off screen. If the Player reaches the water the game is reset.   
 Player.prototype.handleInput = function(keyCode) {    
-    player.off = offScreen;
     var deltaX = 0;
     var deltaY = 0;
 
@@ -111,7 +110,7 @@ Player.prototype.handleInput = function(keyCode) {
     } 
     
     // player runs off screen 
-    if (player.off (this.x+deltaX, this.y+deltaY)) {
+    if (this.off (this.x+deltaX, this.y+deltaY)) {
         //if reach left or right edge
         deltaX = 0;
         //if reach bottom
@@ -119,7 +118,7 @@ Player.prototype.handleInput = function(keyCode) {
     }    
     else {
         // 10 points per successful jump
-        player.score += 10;
+        this.score += 10;
     }
     
     
@@ -131,36 +130,9 @@ Player.prototype.handleInput = function(keyCode) {
         // add extra 500 points to reach the water
         this.score+=500;
         // reset player to initial position
-        player.resetPlayer();
+        this.resetPlayer();
     }
 };
-
-
-// This function detects if an entity's position is off screen
-var offScreen = function(posX,posY) {
-    var x = posX;
-    var y = posY;
-    if ((x >= (width-10) || x < 0) || (y > (height-2 * TILE_HEIGHT))) {
-        return true;
-    }
-    else {
-        return false; 
-    }
-};
-
-
-    
-// This function detects if two entities collude and returns true if they collude otherwise return false.
-var doesCollude = function checkCollisions (x1, y1, x2, y2) {
-    if ((x1 >= x2) && 
-       ((x2 + TILE_WIDTH) >= x1) && 
-       (y1 >= y2) &&
-       ((y2 + TILE_HEIGHT)> y1)) {
-        return true;
-    };
-        return false;    
-};    
-
 
 // This function resets player's position to initial square
 Player.prototype.resetPlayer = function() {
@@ -170,6 +142,9 @@ Player.prototype.resetPlayer = function() {
     newPos[0] = this.x;
     newPos[1] = this.y;
 };
+
+var i,
+    j;
 
 var Gem = function() {
     this.sprite;
@@ -182,16 +157,14 @@ var Gem = function() {
 
 Gem.prototype.update = function() {
     // updates only if player collects gem
-    gem.colludes = doesCollude;
-    if (gem.colludes (this.x, this.y, player.x, player.y)) {
+    if (this.colludes (this.x, this.y, player.x, player.y)) {
         // gem moved off screen
         this.x = GEM_INIT_X;
         this.y = GEM_INIT_Y;
         this.collected = true;
         // add 200 extra points to score
         player.score += 200;
-        console.log(doesCollude)
-    };
+    }
 };
 
 Gem.prototype.render = function() {
@@ -202,7 +175,7 @@ Gem.prototype.resetGem = function() {
     this.x = Math.round(Math.random() * 4) * TILE_WIDTH +  (TILE_WIDTH - (SPRITE_WIDTH / 2)) / 2;
     this.y = Math.round(Math.random() * 2) * TILE_HEIGHT + (2 * ENEMY_INIT_Y);
     this.collected = false;
-    index = allGems.indexOf(this);
+    var index = allGems.indexOf(this);
     if (allGems.length > 1) {
         //make sure two gems do not occupy the same place
         for (i = 0; i < index; i++){
@@ -226,12 +199,12 @@ var gemImages = [
     'images/Gem Blue.png'
 ]; 
 
-numGems = 5;
+var numGems = 5;
     
 //create gems at random places on the paved block
-gemCount = 0;
+var gemCount = 0;
 for (j = 0; j < numGems; j++) {
-    gem = new Gem();
+    var gem = new Gem();
     gem.sprite = gemImages[gemCount];
     if (gemCount >= (gemImages.length - 1)) {
         gemCount = 0;
@@ -242,9 +215,10 @@ for (j = 0; j < numGems; j++) {
     // pos x, y on a tile within the canvas and on the paved block
     gem.resetGem();
     allGems.push(gem);
-};
+}
 // Place all enemy objects in an array called allEnemies
 var allEnemies = [];
+var enemy = {};
 // create two enemies per row
 for (i=0; i<2; i++) {
     for (j=0; j<3; j++) {
@@ -259,7 +233,7 @@ for (i=0; i<2; i++) {
         allEnemies.push(enemy);
         row++;
     }
-};
+}
 
 // Place the player object in a variable called player
 var player = new Player();
@@ -276,4 +250,3 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
-

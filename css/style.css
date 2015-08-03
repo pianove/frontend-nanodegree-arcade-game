@@ -25,28 +25,28 @@ canvas {
     background-color: transparent;    
 }
 
-#viewport {
+.view {
     position: relative;
     width: 100%;
 }
 
-#btn-play {
+.play {
     position: absolute;
     top: 25%;
     left: 43%;
     right: 43%;
 }
 
-#btn-back {
+.back {
     position: absolute;
     top: 37%;
     left: 43%;
-    right: 43%
+    right: 43%;
 }
 
-#btn-exit {
+.exit {
     position: absolute;
-    top: 51%;
+    bottom: 29%;
     left: 43%;
     right: 44%;
 }
@@ -55,6 +55,11 @@ p {
     color: white;
     margin: 0;
     padding: 0;
+}
+
+li {
+    color: white;
+    text-align: left;
 }
 
 button {
@@ -75,7 +80,7 @@ img:hover {
     cursor: pointer;
 }
 
-#game-rules-content {
+.rules-content {
     color: white;
     margin: 50px;
     padding: 15px;
