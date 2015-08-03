@@ -2,7 +2,7 @@ frontend-nanodegree-arcade-game
 ===============================
 
 PLAY THE GAME
-To load the game, visit my gh-page on http://pianove.github.io/
+To load the game, visit my gh-page on http://pianove.github.io/frontend-nanodegree-arcade-game/.
 
 To start the game, You click on button START GAME, then select a character for your player by doubleclicking the selected image.
 
