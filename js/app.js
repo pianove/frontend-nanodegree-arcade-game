@@ -1,16 +1,16 @@
 "use strict";
 
 //Constant values 
-const TILE_WIDTH = 100,
-TILE_HEIGHT = 80, 
-PLAYER_INIT_X = 200,
-PLAYER_INIT_Y = 400,
-ENEMY_INIT_X = 0,
-ENEMY_INIT_Y = 60,
-GEM_INIT_X = 700,
-GEM_INIT_Y = 0,
-SPRITE_WIDTH = 100,
-SPRITE_HEIGHT = 172;
+var TILE_WIDTH = 100,
+    TILE_HEIGHT = 80, 
+    PLAYER_INIT_X = 200,
+    PLAYER_INIT_Y = 400,
+    ENEMY_INIT_X = 0,
+    ENEMY_INIT_Y = 60,
+    GEM_INIT_X = 700,
+    GEM_INIT_Y = 0,
+    SPRITE_WIDTH = 100,
+    SPRITE_HEIGHT = 172;
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -67,14 +67,17 @@ var Player = function() {
     // setting the initial location
     this.x = PLAYER_INIT_X;
     this.y = PLAYER_INIT_Y;
+    //setting inital coordinates of player's position
+    this.newPos = [this.x, this.y];
     // setting initial score
     this.score = 0;
+    
 };
 
 // Update the player's position
 Player.prototype.update = function() {
-    this.x = newPos[0];
-    this.y = newPos[1];
+    this.x = this.newPos[0];
+    this.y = this.newPos[1];
 };
 
 Player.prototype.render = function() {
@@ -83,7 +86,7 @@ Player.prototype.render = function() {
 };
 
 // stores player's position to send to Player.update() function
-var newPos = [PLAYER_INIT_X,PLAYER_INIT_Y];
+//var newPos = [PLAYER_INIT_X,PLAYER_INIT_Y];
 // This function handles players' move upon a key pressed. Makes sure that Player does not move off screen. If the Player reaches the water the game is reset.   
 Player.prototype.handleInput = function(keyCode) {    
     var deltaX = 0;
@@ -122,11 +125,11 @@ Player.prototype.handleInput = function(keyCode) {
     }
     
     
-    newPos[0] = this.x + deltaX;
-    newPos[1] = this.y + deltaY;
+    this.newPos[0] = this.x + deltaX;
+    this.newPos[1] = this.y + deltaY;
 
     // check if water block reached
-    if (newPos[1] < 60) {
+    if (this.newPos[1] < 60) {
         // add extra 500 points to reach the water
         this.score+=500;
         // reset player to initial position
@@ -139,8 +142,8 @@ Player.prototype.resetPlayer = function() {
     // reset Player to initial position
     this.x = PLAYER_INIT_X;
     this.y = PLAYER_INIT_Y;
-    newPos[0] = this.x;
-    newPos[1] = this.y;
+    this.newPos[0] = this.x;
+    this.newPos[1] = this.y;
 };
 
 var i,
